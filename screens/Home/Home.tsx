@@ -1,6 +1,6 @@
 import styles from './styles';
 import React, { Component } from 'react';
-import { SafeAreaView, FlatList, Text, View, StyleSheet } from 'react-native';
+import { SafeAreaView, FlatList, Text, View, StyleSheet, NativeModules } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -31,6 +31,10 @@ function Home({ navigation }) {
             playListId: id
         });
     };
+
+    NativeModules.SongManager.getAllSongs()
+        .then(res => console.log(res))
+        .catch(e => console.log(e.message, e.code))
 
     return (
         <SafeAreaView style={styles.container}>

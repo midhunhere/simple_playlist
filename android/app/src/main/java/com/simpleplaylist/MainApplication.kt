@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.facebook.react.*
 import com.facebook.soloader.SoLoader
+import com.simpleplaylist.modules.SongPackage
 import java.lang.reflect.InvocationTargetException
 
 public class MainApplication: Application(), ReactApplication {
@@ -14,7 +15,7 @@ public class MainApplication: Application(), ReactApplication {
     private val host = object : ReactNativeHost(this) {
         override fun getPackages(): MutableList<ReactPackage> = PackageList(this).packages.apply {
             // Packages that cannot be autolinked yet can be added manually here, for example:
-            // add(MyReactNativePackage());
+            add(SongPackage())
         }
         override fun getUseDeveloperSupport() = BuildConfig.DEBUG
         override fun getJSMainModuleName() = MAIN_MODULE_NAME

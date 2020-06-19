@@ -17,6 +17,8 @@
 		A9AF2ED7477A0FED3E2B588A /* libPods-SimplePlayList-SimplePlayListTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C3505A879FF4FA96239C37F /* libPods-SimplePlayList-SimplePlayListTests.a */; };
 		D4EFF1486C8B257942643CBC /* libPods-SimplePlayList-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 824BD5827C604EC8829EAB1D /* libPods-SimplePlayList-tvOS.a */; };
 		D98DFB4E249C0B85000C1DE7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98DFB4D249C0B85000C1DE7 /* AppDelegate.swift */; };
+		D9938770249D36560070D063 /* SongManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D993876F249D36560070D063 /* SongManager.swift */; };
+		D9938772249D37E70070D063 /* SongManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D9938771249D37E70070D063 /* SongManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +61,8 @@
 		CED9A952EF3BA446B591F967 /* Pods-SimplePlayList-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SimplePlayList-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-SimplePlayList-tvOS/Pods-SimplePlayList-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		D98DFB4C249C0B84000C1DE7 /* SimplePlayList-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SimplePlayList-Bridging-Header.h"; sourceTree = "<group>"; };
 		D98DFB4D249C0B85000C1DE7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = SimplePlayList/AppDelegate.swift; sourceTree = "<group>"; };
+		D993876F249D36560070D063 /* SongManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongManager.swift; sourceTree = "<group>"; };
+		D9938771249D37E70070D063 /* SongManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SongManager.m; sourceTree = "<group>"; };
 		E597EB2DA779FEFDD9C5508F /* Pods-SimplePlayList-SimplePlayListTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SimplePlayList-SimplePlayListTests.release.xcconfig"; path = "Target Support Files/Pods-SimplePlayList-SimplePlayListTests/Pods-SimplePlayList-SimplePlayListTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
@@ -121,6 +125,7 @@
 		13B07FAE1A68108700A75B9A /* SimplePlayList */ = {
 			isa = PBXGroup;
 			children = (
+				D993876D249D2D7F0070D063 /* Modules */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -190,6 +195,15 @@
 				A0711EC70E355DD50B0ECCF8 /* Pods-SimplePlayList-tvOSTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		D993876D249D2D7F0070D063 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				D993876F249D36560070D063 /* SongManager.swift */,
+				D9938771249D37E70070D063 /* SongManager.m */,
+			);
+			path = Modules;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -622,6 +636,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9938772249D37E70070D063 /* SongManager.m in Sources */,
+				D9938770249D36560070D063 /* SongManager.swift in Sources */,
 				D98DFB4E249C0B85000C1DE7 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
