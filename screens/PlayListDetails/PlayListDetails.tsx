@@ -1,11 +1,9 @@
 import styles from './styles';
-import React, { Component } from 'react';
-import { Text, View, SafeAreaView, FlatList } from 'react-native';
+import React, { Component, useState } from 'react';
+import { Text, View, SafeAreaView, FlatList, NativeModules } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-
-import { PlayLists, AllSongs, PlayList } from '../../data/Data'
 
 function SongItem({ item }) {
     return (
@@ -18,19 +16,21 @@ function SongItem({ item }) {
 function PlayListDetails({ route, navigation }) {
 
     const { playListId } = route.params;
+    const [songs, setSongs] = useState(new Array());
 
-    const playlist = PlayLists.find((item) => item.id === playListId) || new PlayList('', '', [], '');
-
-    const songs = playlist.songs;
-
-    var songData = AllSongs.filter((song) => songs.includes(song.id));
-
-    navigation.setOptions({ title: playlist.name });
+    if (songs.length == 0) {
+        NativeModules.SongManager.getAllSongs(playListId)
+            .then(res => {
+                setSongs(res["songs"]);
+                navigation.setOptions({ title: res["name"] });
+            })
+            .catch(e => console.log(e.message, e.code))
+    }
 
     return (
         <SafeAreaView style={styles.container}>
             <FlatList
-                data={songData}
+                data={songs}
                 renderItem={({ item }) => (
                     <SongItem
                         item={item}

@@ -1,0 +1,60 @@
+repositories {
+    mavenCentral()
+}
+group 'com.example'
+version '0.0.1'
+
+
+apply plugin: 'kotlin-multiplatform'
+apply plugin: 'kotlin-native-cocoapods'
+apply plugin: 'maven-publish'
+
+kotlin {
+    jvm()
+    // This is for iPhone simulator
+    // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
+    iosX64("ios")
+    iosX64("ios")
+
+    version = "1.0.0"
+    cocoapods {
+        summary = "Database library"
+        homepage = "https://github.com/"
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib')
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation kotlin('test-junit')
+            }
+        }
+        iosMain {
+        }
+        iosTest {
+        }
+    }
+}
+
+configurations {
+    compileClasspath
+}
+
+
+

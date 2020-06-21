@@ -1,11 +1,9 @@
 import styles from './styles';
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { SafeAreaView, FlatList, Text, View, StyleSheet, NativeModules } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
-import { PlayLists } from '../../data/Data'
 
 
 function PlayListItem({ item, onSelect }) {
@@ -25,6 +23,8 @@ function PlayListItem({ item, onSelect }) {
 
 function Home({ navigation }) {
 
+    const [playLists, setPlayLists] = useState(new Array());
+
     const onSelect = (id) => {
         console.log("Selected " + id);
         navigation.navigate('PlayListDetails', {
@@ -32,14 +32,18 @@ function Home({ navigation }) {
         });
     };
 
-    NativeModules.SongManager.getAllSongs()
-        .then(res => console.log(res))
-        .catch(e => console.log(e.message, e.code))
+    if (playLists.length == 0) {
+        NativeModules.SongManager.getAllPlayLists()
+            .then(res => {
+                setPlayLists(res["playlists"]);
+            })
+            .catch(e => console.log(e.message, e.code))
+    }
 
     return (
         <SafeAreaView style={styles.container}>
             <FlatList
-                data={PlayLists}
+                data={playLists}
                 renderItem={({ item }) => (
                     <PlayListItem
                         item={item}

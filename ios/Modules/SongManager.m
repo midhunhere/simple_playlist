@@ -14,4 +14,15 @@ RCT_EXTERN_METHOD(
   rejecter: (RCTPromiseRejectBlock)reject
 )
 
+RCT_EXTERN_METHOD(
+  getAllPlayLists: (RCTPromiseResolveBlock)resolve
+  rejecter: (RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  getAllSongs: (NSInteger)playlistId
+  resolver: (RCTPromiseResolveBlock)resolve
+  rejecter: (RCTPromiseRejectBlock)reject
+)
+
 @end

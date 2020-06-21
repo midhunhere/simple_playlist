@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import database
 
 private let MAIN_MODULE_NAME = "SimplePlayList"
 
@@ -19,6 +20,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RCTBridgeDelegate {
     #if DEBUG
     AppDelegate.initializeFlipper(application: application)
     #endif
+    
+    print(SampleKt.hello())
     
     guard let bridge = RCTBridge(delegate: self, launchOptions: launchOptions) else { return false }
     let rootView = RCTRootView(bridge: bridge, moduleName: MAIN_MODULE_NAME, initialProperties: nil)
