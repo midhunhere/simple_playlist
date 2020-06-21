@@ -1,16 +1,53 @@
 repositories {
+    google()
+    jcenter()
     mavenCentral()
 }
-group 'com.example'
+group 'com.simpleplaylist.database'
 version '0.0.1'
 
 
 apply plugin: 'kotlin-multiplatform'
 apply plugin: 'kotlin-native-cocoapods'
-apply plugin: 'maven-publish'
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android-extensions'
+//apply plugin: "com.squareup.sqldelight"
+//
+//sqldelight {
+//    MyDatabase {
+//        packageName = "com.simpleplaylist.database"
+//    }
+//}
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
 
 kotlin {
-    jvm()
+    android("android")
     // This is for iPhone simulator
     // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
     iosX64("ios")
@@ -34,12 +71,12 @@ kotlin {
                 implementation kotlin('test-annotations-common')
             }
         }
-        jvmMain {
+        androidMain {
             dependencies {
                 implementation kotlin('stdlib')
             }
         }
-        jvmTest {
+        androidTest {
             dependencies {
                 implementation kotlin('test')
                 implementation kotlin('test-junit')

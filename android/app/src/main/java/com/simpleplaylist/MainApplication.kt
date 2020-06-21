@@ -5,6 +5,7 @@ import android.content.Context
 import com.facebook.react.*
 import com.facebook.soloader.SoLoader
 import com.simpleplaylist.modules.SongPackage
+import sample.hello
 import java.lang.reflect.InvocationTargetException
 
 public class MainApplication: Application(), ReactApplication {
@@ -30,6 +31,8 @@ public class MainApplication: Application(), ReactApplication {
         super.onCreate()
         SoLoader.init(this, false)
         initializeFlipper(this, reactNativeHost.reactInstanceManager)
+
+        println(hello())
     }
 
     /*///////////////////////////////////////////////////////////
