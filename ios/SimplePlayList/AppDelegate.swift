@@ -17,11 +17,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, RCTBridgeDelegate {
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
     
+    // Setup DB
+    Db.init().dbSetup()
+    
     #if DEBUG
     AppDelegate.initializeFlipper(application: application)
     #endif
     
-    print(SampleKt.hello())
     
     guard let bridge = RCTBridge(delegate: self, launchOptions: launchOptions) else { return false }
     let rootView = RCTRootView(bridge: bridge, moduleName: MAIN_MODULE_NAME, initialProperties: nil)

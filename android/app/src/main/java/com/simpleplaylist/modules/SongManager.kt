@@ -3,8 +3,17 @@ package com.simpleplaylist.modules
 import com.facebook.react.bridge.*
 import com.simpleplaylist.database.Mapper
 import com.simpleplaylist.database.SongDatabase
+import com.simpleplaylist.database.getSongDatabase
 
 public class SongManager(private val reactContext: ReactApplicationContext): ReactContextBaseJavaModule(reactContext) {
+
+    /*///////////////////////////////////////////////////////////
+     * PRIVATE MEMBERS
+     *///////////////////////////////////////////////////////////
+    private val database: SongDatabase by lazy {
+        getSongDatabase()
+    }
+
 
     /*///////////////////////////////////////////////////////////
      * OVERRIDES
@@ -20,7 +29,7 @@ public class SongManager(private val reactContext: ReactApplicationContext): Rea
 
         val songs = Arguments.createArray()
 
-        val savedSongs = SongDatabase.getAllSongs(object : Mapper() {
+        val savedSongs = database.getAllSongs(object : Mapper() {
             override fun map(type: String, data: Map<String, Any>): Any {
                 val songMap = Arguments.createMap()
                 songMap.putInt("id", data["id"] as Int)
@@ -44,7 +53,7 @@ public class SongManager(private val reactContext: ReactApplicationContext): Rea
 
         val songs = Arguments.createArray()
 
-        val savedSongs = SongDatabase.getAllSongs(playlistId, object : Mapper() {
+        val savedSongs = database.getAllSongs(playlistId, object : Mapper() {
             override fun map(type: String, data: Map<String, Any>): Any {
                 val songMap = Arguments.createMap()
                 songMap.putInt("id", (data["id"] as Long).toInt())
@@ -60,7 +69,7 @@ public class SongManager(private val reactContext: ReactApplicationContext): Rea
 
         map.putArray("songs", songs)
 
-        SongDatabase.getPlayList(playlistId, object : Mapper(){
+        database.getPlayList(playlistId, object : Mapper(){
 
             override fun map(type: String, data: Map<String, Any>): Any {
                 return Arguments.createMap().also {
@@ -83,7 +92,7 @@ public class SongManager(private val reactContext: ReactApplicationContext): Rea
         val parseMap = HashMap<Int, WritableMap>()
         var songMap = HashMap<Int, WritableArray>()
 
-        val savedPlayLists = SongDatabase.getAllPlayLists(object : Mapper() {
+        val savedPlayLists = database.getAllPlayLists(object : Mapper() {
             override fun map(type: String, data: Map<String, Any>): Any {
 
                 val playlistId = (data["id"] as? Long)?.toInt() ?: return Unit

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.facebook.react.*
 import com.facebook.soloader.SoLoader
+import com.simpleplaylist.database.Db
 import com.simpleplaylist.database.Mapper
 import com.simpleplaylist.database.SongDatabase
 import com.simpleplaylist.database.SongDb
@@ -35,7 +36,7 @@ public class MainApplication: Application(), ReactApplication {
         SoLoader.init(this, false)
         initializeFlipper(this, reactNativeHost.reactInstanceManager)
 
-        SongDatabase.driver = AndroidSqliteDriver(SongDb.Schema, this, "song.db")
+        Db.dbSetup(this)
     }
 
     /*///////////////////////////////////////////////////////////

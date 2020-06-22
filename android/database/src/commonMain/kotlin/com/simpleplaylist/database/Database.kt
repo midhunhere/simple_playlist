@@ -1,9 +1,7 @@
 package com.simpleplaylist.database
 
-import com.squareup.sqldelight.db.SqlDriver
-import kotlin.native.concurrent.ThreadLocal
 
-expect fun getDriver(): SqlDriver?
+expect fun getSongDatabase(): SongDatabase
 
 open class Mapper {
     open fun map(type:String, data:Map<String, Any>): Any {
@@ -12,13 +10,7 @@ open class Mapper {
     }
 }
 
-@ThreadLocal
-object SongDatabase {
-    var driver: SqlDriver? =
-        getDriver()
-    val database: SongDb by lazy {
-        SongDb(driver!!)
-    }
+class SongDatabase(private val database: SongDb) {
 
     fun getAllSongs(mapper: Mapper): List<Any> {
         return database.schemaQueries.getAllSongs { id, name ->

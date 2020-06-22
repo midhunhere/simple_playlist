@@ -79,6 +79,7 @@ kotlin {
         androidMain {
             dependencies {
                 api kotlin('stdlib')
+                implementation "com.squareup.sqldelight:android-driver:1.2.2"
             }
         }
         androidTest {

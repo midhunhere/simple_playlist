@@ -6,89 +6,141 @@
 //
 
 import Foundation
+import database
+
+class SwiftMapper: Mapper {
+  
+  var mapperFunc:((String,[String : Any])->(Any))?
+
+  override func map(type: String, data: [String : Any]) -> Any {
+    if let mapper = mapperFunc {
+      return mapper(type, data)
+    } else {
+      return data
+    }
+  }
+  
+}
 
 @objc(SongManager)
 class SongManager: NSObject {
   
-  let AllSongs = [
-    Song(id: 1, name: "Song 1"),
-    Song(id: 2, name: "Song 2"),
-    Song(id: 3, name: "Song 3"),
-    Song(id: 4, name: "Song 4"),
-    Song(id: 5, name: "Song 5"),
-    Song(id: 6, name: "Song 6"),
-    Song(id: 7, name: "Song 7"),
-    Song(id: 8, name: "Song 8"),
-    Song(id: 9, name: "Song 9"),
-    Song(id: 10, name: "Song 10")
-  ]
-
-  let AllPlayLists = [
-    PlayList(id: 1, name: "Play List 1", tint: "green", songs: [1, 2, 5]),
-    PlayList(id: 2, name: "Play List 2", tint: "yellow", songs: [2, 6]),
-    PlayList(id: 3, name: "Play List 3", tint: "orange", songs: [8])
-  ]
+  private lazy var database: SongDatabase = DatabaseKt.getSongDatabase()
   
   @objc
-  func getAllSongs(_ resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
+  func getAllSongs(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
     
-    guard let data = try? JSONEncoder().encode(AllSongs) else {
-      reject("","",NSError())
-      return
+    DispatchQueue.global().async { [unowned self] in
+      
+      let allSongs = self.database.getAllSongs(mapper: SwiftMapper())
+      
+      let map = [ "songs" : allSongs ]
+      
+      resolve(map)
     }
-    guard let dictionary = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [[String: Any]] else {
-      reject("","",NSError())
-      return
-    }
-    
-    let map = [ "songs" : dictionary ]
-    
-    resolve(map)
     
   }
   
   @objc
-  func getAllPlayLists(_ resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
+  func getAllPlayLists(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
     
-    guard let data = try? JSONEncoder().encode(AllPlayLists) else {
-      reject("","",NSError(domain: "", code: 0, userInfo: nil))
-      return
+    DispatchQueue.global().async { [unowned self] in
+    
+      var playLists = [[String: Any]]()
+      var parseMap = [Int:[String: Any]]()
+      var songMap = [Int:[Int]]()
+      
+      let mapper = SwiftMapper()
+      
+      mapper.mapperFunc = { (type, data) in
+        
+        if let playListId = data["id"] as? NSNumber {
+          
+          var playList =  [String: Any]()
+          var songs = [Int]()
+          
+          if let savedSongs = songMap[playListId.intValue] {
+            songs = savedSongs
+          }
+          
+          if parseMap[playListId.intValue] == nil {
+            playList["id"] = playListId.intValue
+            playList["name"] = data["name"] as? String
+            playList["tint"] = data["tint"] as? String
+          } else {
+            playList = parseMap[playListId.intValue]!
+          }
+          
+          if let songId = data["songId"] as? NSNumber {
+            songs.append(songId.intValue)
+            
+            songMap[playListId.intValue] = songs
+          }
+          
+          parseMap[playListId.intValue] = playList
+          
+          return playList
+        }
+        
+        return data
+      }
+      
+      self.database.getAllPlayLists(mapper: mapper)
+      
+      mapper.mapperFunc = nil
+      
+      parseMap.keys.sorted().forEach { key in
+        
+        if let value = parseMap[key] {
+        
+          var playlist = value
+          
+          if let songs = songMap[key] {
+            playlist["songs"] = songs
+          }
+          
+          playLists.append(playlist)
+        }
+      }
+      
+      let map = [ "playlists" : playLists ]
+      
+      resolve(map)
     }
-    guard let dictionary = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [[String: Any]] else {
-      reject("","",NSError(domain: "", code: 0, userInfo: nil))
-      return
-    }
-    
-    let map = [ "playlists" : dictionary ]
-    
-    resolve(map)
   }
   
   @objc
-  func getAllSongsForPlayList(_ playlistId:NSInteger, resolver resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
-    let givenPlayList = AllPlayLists.first { $0.id == playlistId }
-    guard let playlist = givenPlayList else {
-      reject("","",NSError(domain: "", code: 0, userInfo: nil))
-      return
+  func getAllSongsForPlayList(_ playlistId:NSInteger, resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
+    
+    DispatchQueue.global().async { [unowned self] in
+    
+      
+      let allSongs = self.database.getAllSongs(playListId: Int32(playlistId), mapper: SwiftMapper())
+      
+      var map: [String: Any] = [ "songs" : allSongs ]
+      
+      let mapper = SwiftMapper()
+      
+      mapper.mapperFunc = { (type, data) in
+        
+        map["name"] = data["name"]
+        map["id"] = data["id"]
+        map["tint"] = data["tint"]
+        
+        return data
+      }
+      
+      _ = self.database.getPlayList(playListId: Int32(playlistId), mapper: mapper)
+      
+      mapper.mapperFunc = nil
+      
+      resolve(map)
     }
-    
-    let filteredSongs = AllSongs.filter { playlist.songs.contains($0.id)}
-    
-    guard let data = try? JSONEncoder().encode(filteredSongs) else {
-      reject("","",NSError(domain: "", code: 0, userInfo: nil))
-      return
-    }
-    guard let dictionary = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [[String: Any]] else {
-      reject("","",NSError(domain: "", code: 0, userInfo: nil))
-      return
-    }
-    
-    let map = [ "songs" : dictionary,
-                "name": playlist.name,
-                "id": playlist.id,
-                "tint": playlist.tint ] as [String : Any]
-    
-    resolve(map)
+  }
+  
+  @objc
+  static func requiresMainQueueSetup() -> Bool {
+    return false
   }
   
 }

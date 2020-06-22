@@ -219,7 +219,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation project(path: ':database')
-    implementation "com.squareup.sqldelight:android-driver:1.2.2"
 
 }
 
