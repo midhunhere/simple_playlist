@@ -19,7 +19,7 @@ function PlayListDetails({ route, navigation }) {
     const [songs, setSongs] = useState(new Array());
 
     if (songs.length == 0) {
-        NativeModules.SongManager.getAllSongs(playListId)
+        NativeModules.SongManager.getAllSongsForPlayList(playListId)
             .then(res => {
                 setSongs(res["songs"]);
                 navigation.setOptions({ title: res["name"] });

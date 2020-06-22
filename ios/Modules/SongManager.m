@@ -20,7 +20,7 @@ RCT_EXTERN_METHOD(
 )
 
 RCT_EXTERN_METHOD(
-  getAllSongs: (NSInteger)playlistId
+  getAllSongsForPlayList: (NSInteger)playlistId
   resolver: (RCTPromiseResolveBlock)resolve
   rejecter: (RCTPromiseRejectBlock)reject
 )

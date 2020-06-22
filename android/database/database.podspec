@@ -8,7 +8,7 @@ Pod::Spec.new do |spec|
     spec.summary                  = 'Database library'
 
     spec.static_framework         = true
-    spec.vendored_frameworks      = "build/cocoapods/framework/database.framework"
+    spec.vendored_frameworks      = "build/cocoapods/framework/#{spec.name}.framework"
     spec.libraries                = "c++"
     spec.module_name              = "#{spec.name}_umbrella"
 

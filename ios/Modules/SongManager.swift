@@ -65,7 +65,7 @@ class SongManager: NSObject {
   }
   
   @objc
-  func getAllSongs(_ playlistId:NSInteger, resolver resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
+  func getAllSongsForPlayList(_ playlistId:NSInteger, resolver resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
     let givenPlayList = AllPlayLists.first { $0.id == playlistId }
     guard let playlist = givenPlayList else {
       reject("","",NSError(domain: "", code: 0, userInfo: nil))
