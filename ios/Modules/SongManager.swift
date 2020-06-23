@@ -139,6 +139,18 @@ class SongManager: NSObject {
   }
   
   @objc
+  func syncPlayList(_ playlistId:NSInteger, songs songIds:NSArray, resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
+    
+    DispatchQueue.global().async { [unowned self] in
+      
+      self.database.syncPlayList(playListId: Int32(playlistId), songs: songIds.map { KotlinInt(int: ($0 as! NSNumber).int32Value) })
+      resolve(true)
+      
+    }
+    
+  }
+  
+  @objc
   static func requiresMainQueueSetup() -> Bool {
     return false
   }

@@ -2,9 +2,21 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1
+    },
+    item: {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
+        flexDirection: 'row',
+        alignItems: 'stretch'
+    },
+    title: {
+        flex: 1,
+        fontSize: 20,
+        padding: 8,
+        alignSelf: 'stretch'
+    },
+    icon: {
+        padding: 8
     }
 });
 

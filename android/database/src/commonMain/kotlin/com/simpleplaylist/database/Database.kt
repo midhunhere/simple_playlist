@@ -44,7 +44,7 @@ class SongDatabase(private val database: SongDb) {
             }).executeAsList()
     }
 
-    fun getPlayList(playListId: Int,mapper:Mapper): List<Any> {
+    fun getPlayList(playListId: Int, mapper:Mapper): List<Any> {
         return database.schemaQueries.getPlayList(
             id = playListId.toLong(),
             mapper = { id, name, tint ->
@@ -54,5 +54,28 @@ class SongDatabase(private val database: SongDb) {
             map["tint"] = tint
             mapper.map("PlayList", map)
         }).executeAsList()
+    }
+
+    fun syncPlayList(playListId: Int, songs:List<Int>) {
+        val songIds = database.schemaQueries.getAllSongsForPlayList(playListId.toLong()).executeAsList().map { it.id.toInt() }
+
+        val unlinkSongIds = songIds.filter { !songs.contains(it) }
+        val linkSongIds = songs.filter { !songIds.contains(it) }
+
+        if (unlinkSongIds.isNotEmpty()) {
+            database.schemaQueries.transaction {
+                unlinkSongIds.forEach {
+                    database.schemaQueries.unlinkSongWithPlayList(playListId.toLong(), it.toLong())
+                }
+            }
+        }
+
+        if (linkSongIds.isNotEmpty()) {
+            database.schemaQueries.transaction {
+                linkSongIds.forEach {
+                    database.schemaQueries.linkSongWithPlayList(playListId.toLong(), it.toLong())
+                }
+            }
+        }
     }
 }

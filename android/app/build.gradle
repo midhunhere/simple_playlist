@@ -233,3 +233,5 @@ apply from: file("../../node_modules/@react-native-community/cli-platform-androi
 repositories {
     mavenCentral()
 }
+
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"

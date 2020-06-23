@@ -59,6 +59,7 @@
 		9C3505A879FF4FA96239C37F /* libPods-SimplePlayList-SimplePlayListTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SimplePlayList-SimplePlayListTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0711EC70E355DD50B0ECCF8 /* Pods-SimplePlayList-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SimplePlayList-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-SimplePlayList-tvOSTests/Pods-SimplePlayList-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		CED9A952EF3BA446B591F967 /* Pods-SimplePlayList-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SimplePlayList-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-SimplePlayList-tvOS/Pods-SimplePlayList-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		D95294E424A1AD27009B767A /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		D98DFB4C249C0B84000C1DE7 /* SimplePlayList-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SimplePlayList-Bridging-Header.h"; sourceTree = "<group>"; };
 		D98DFB4D249C0B85000C1DE7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = SimplePlayList/AppDelegate.swift; sourceTree = "<group>"; };
 		D993876F249D36560070D063 /* SongManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongManager.swift; sourceTree = "<group>"; };
@@ -125,6 +126,7 @@
 		13B07FAE1A68108700A75B9A /* SimplePlayList */ = {
 			isa = PBXGroup;
 			children = (
+				D95294E424A1AD27009B767A /* MaterialIcons.ttf */,
 				D993876D249D2D7F0070D063 /* Modules */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,

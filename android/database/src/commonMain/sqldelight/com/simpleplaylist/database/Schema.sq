@@ -42,3 +42,11 @@ getPlayList:
 SELECT * FROM PlayList
 WHERE id = ? ;
 
+linkSongWithPlayList:
+INSERT INTO PlayListSongs (playListId, songId)
+VALUES (?, ?);
+
+unlinkSongWithPlayList:
+DELETE FROM PlayListSongs
+WHERE playListId = ? AND songId = ? ;
+
