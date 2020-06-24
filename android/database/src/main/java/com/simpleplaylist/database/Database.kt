@@ -9,6 +9,10 @@ actual fun getSongDatabase(): SongDatabase {
 }
 
 object Db {
+
+    /*///////////////////////////////////////////////////////////
+     * PRIVATE MEMBERS
+     *///////////////////////////////////////////////////////////
     private var driverRef: SqlDriver? = null
     private var dbRef: SongDb? = null
     private var songDatabaseRef: SongDatabase? = null
@@ -29,6 +33,9 @@ object Db {
         driverRef = null
     }
 
+    /*///////////////////////////////////////////////////////////
+     * EXPOSED MEMBERS
+     *///////////////////////////////////////////////////////////
     val instance: SongDb
         get() = dbRef!!
 

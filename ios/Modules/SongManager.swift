@@ -8,10 +8,20 @@
 import Foundation
 import database
 
+
+//====================================================================
+//  MARK: MAPPER CLASS
+//====================================================================
 class SwiftMapper: Mapper {
   
+  //====================================================================
+  //  MARK: PUBLIC MEMBERS
+  //====================================================================
   var mapperFunc:((String,[String : Any])->(Any))?
 
+  //====================================================================
+  //  MARK: OVERRIDES
+  //====================================================================
   override func map(type: String, data: [String : Any]) -> Any {
     if let mapper = mapperFunc {
       return mapper(type, data)
@@ -22,20 +32,28 @@ class SwiftMapper: Mapper {
   
 }
 
+
+//====================================================================
+//  MARK: SONG MANAGER REACT NATIVE MODULE
+//====================================================================
 @objc(SongManager)
-class SongManager: NSObject {
+class SongManager: RCTEventEmitter {
   
+  //====================================================================
+  //  MARK: PRIVATE MEMBERS
+  //====================================================================
   private lazy var database: SongDatabase = DatabaseKt.getSongDatabase()
   
+  
+  //====================================================================
+  //  MARK: PUBLIC METHODS
+  //====================================================================
   @objc
   func getAllSongs(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
     
     DispatchQueue.global().async { [unowned self] in
-      
       let allSongs = self.database.getAllSongs(mapper: SwiftMapper())
-      
       let map = [ "songs" : allSongs ]
-      
       resolve(map)
     }
     
@@ -45,68 +63,11 @@ class SongManager: NSObject {
   func getAllPlayLists(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
     
     DispatchQueue.global().async { [unowned self] in
-    
-      var playLists = [[String: Any]]()
-      var parseMap = [Int:[String: Any]]()
-      var songMap = [Int:[Int]]()
-      
-      let mapper = SwiftMapper()
-      
-      mapper.mapperFunc = { (type, data) in
-        
-        if let playListId = data["id"] as? NSNumber {
-          
-          var playList =  [String: Any]()
-          var songs = [Int]()
-          
-          if let savedSongs = songMap[playListId.intValue] {
-            songs = savedSongs
-          }
-          
-          if parseMap[playListId.intValue] == nil {
-            playList["id"] = playListId.intValue
-            playList["name"] = data["name"] as? String
-            playList["tint"] = data["tint"] as? String
-          } else {
-            playList = parseMap[playListId.intValue]!
-          }
-          
-          if let songId = data["songId"] as? NSNumber {
-            songs.append(songId.intValue)
-            
-            songMap[playListId.intValue] = songs
-          }
-          
-          parseMap[playListId.intValue] = playList
-          
-          return playList
-        }
-        
-        return data
-      }
-      
-      self.database.getAllPlayLists(mapper: mapper)
-      
-      mapper.mapperFunc = nil
-      
-      parseMap.keys.sorted().forEach { key in
-        
-        if let value = parseMap[key] {
-        
-          var playlist = value
-          
-          if let songs = songMap[key] {
-            playlist["songs"] = songs
-          }
-          
-          playLists.append(playlist)
-        }
-      }
-      
+      let playLists = self.database.getAllPlayLists(mapper: SwiftMapper())
       let map = [ "playlists" : playLists ]
-      
       resolve(map)
     }
+    
   }
   
   @objc
@@ -114,13 +75,12 @@ class SongManager: NSObject {
     
     DispatchQueue.global().async { [unowned self] in
     
-      
+      // Get songs for given playlistID
       let allSongs = self.database.getAllSongs(playListId: Int32(playlistId), mapper: SwiftMapper())
-      
       var map: [String: Any] = [ "songs" : allSongs ]
-      
+
+      // Get playlist details
       let mapper = SwiftMapper()
-      
       mapper.mapperFunc = { (type, data) in
         
         map["name"] = data["name"]
@@ -129,11 +89,9 @@ class SongManager: NSObject {
         
         return data
       }
-      
       _ = self.database.getPlayList(playListId: Int32(playlistId), mapper: mapper)
       
       mapper.mapperFunc = nil
-      
       resolve(map)
     }
   }
@@ -143,16 +101,28 @@ class SongManager: NSObject {
     
     DispatchQueue.global().async { [unowned self] in
       
-      self.database.syncPlayList(playListId: Int32(playlistId), songs: songIds.map { KotlinInt(int: ($0 as! NSNumber).int32Value) })
+      let modified = self.database.syncPlayList(playListId: Int32(playlistId), songs: songIds.map { KotlinInt(int: ($0 as! NSNumber).int32Value) })
       resolve(true)
+      
+      if(modified) {
+        // Sent event when data is modified
+        self.sendEvent(withName: "DataUpdate", body: ["time":Date().timeIntervalSince1970])
+      }
       
     }
     
   }
   
-  @objc
-  static func requiresMainQueueSetup() -> Bool {
+  
+  //====================================================================
+  //  MARK: OVERRIDES
+  //====================================================================
+  override static func requiresMainQueueSetup() -> Bool {
     return false
+  }
+  
+  override func supportedEvents() -> [String]! {
+    return ["DataUpdate"]
   }
   
 }

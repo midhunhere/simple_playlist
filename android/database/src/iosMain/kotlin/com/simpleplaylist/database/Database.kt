@@ -10,6 +10,10 @@ actual fun getSongDatabase(): SongDatabase {
 }
 
 object Db {
+
+    /*///////////////////////////////////////////////////////////
+     * PRIVATE MEMBERS
+     *///////////////////////////////////////////////////////////
     private val driverRef = AtomicReference<SqlDriver?>(null)
     private val dbRef = AtomicReference<SongDb?>(null)
     private val songDatabaseRef = AtomicReference<SongDatabase?>(null)
@@ -31,6 +35,9 @@ object Db {
         songDatabaseRef.value = null
     }
 
+    /*///////////////////////////////////////////////////////////
+     * EXPOSED METHODS
+     *///////////////////////////////////////////////////////////
     val instance: SongDb
         get() = dbRef.value!!
 

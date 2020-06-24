@@ -27,16 +27,19 @@ INSERT INTO PlayListSongs (playListId, songId)
 VALUES (1,1), (1,3), (1,5), (2,4), (2,6), (3,8);
 
 getAllSongs:
-SELECT * FROM Song;
+SELECT * FROM Song
+ORDER BY (name);
 
 getAllPlayLists:
-SELECT * FROM PlayList
-JOIN PlayListSongs ON PlayList.id = PlayListSongs.playListId;
+SELECT id, name, tint, COUNT(*) AS songs FROM PlayList
+JOIN PlayListSongs ON PlayList.id = PlayListSongs.playListId
+GROUP BY (id) ORDER BY (name);
 
 getAllSongsForPlayList:
 SELECT id, name FROM Song
 JOIN PlayListSongs ON Song.id = PlayListSongs.songId
-WHERE playListId = ? ;
+WHERE playListId = ?
+ORDER BY (name);
 
 getPlayList:
 SELECT * FROM PlayList

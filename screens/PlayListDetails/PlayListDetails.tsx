@@ -1,6 +1,6 @@
 import styles from './styles';
-import React, { Component, useState } from 'react';
-import { Text, View, SafeAreaView, FlatList, NativeModules } from 'react-native';
+import React, { Component, useState, useEffect } from 'react';
+import { Text, View, SafeAreaView, FlatList, NativeModules, NativeEventEmitter } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Icon } from 'react-native-elements'
@@ -17,6 +17,25 @@ function PlayListDetails({ route, navigation }) {
 
     const { playListId } = route.params;
     const [songs, setSongs] = useState(new Array());
+    const [isUpdateNeeded, setUpdateNeeded] = useState(true);
+
+    const onDataUpdate = (event) => {
+        setUpdateNeeded(true);
+    };
+
+    useEffect(
+        () => {
+            const DataUpdateEvents = new NativeEventEmitter(NativeModules.SongManager)
+
+            DataUpdateEvents.addListener("DataUpdate", onDataUpdate);
+
+            // Remove event listener on cleanup
+            return () => {
+                DataUpdateEvents.removeListener("DataUpdate", onDataUpdate);
+            };
+        },
+        []
+    );
 
     const onChoose = () => {
         navigation.navigate('PlayListSongSelection', {
@@ -24,9 +43,10 @@ function PlayListDetails({ route, navigation }) {
         });
     };
 
-    if (songs.length == 0) {
+    if (isUpdateNeeded) {
         NativeModules.SongManager.getAllSongsForPlayList(playListId)
             .then(res => {
+                setUpdateNeeded(false);
                 setSongs(res["songs"]);
                 navigation.setOptions({
                     title: res["name"],

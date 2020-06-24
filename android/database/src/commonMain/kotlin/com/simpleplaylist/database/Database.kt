@@ -3,6 +3,9 @@ package com.simpleplaylist.database
 
 expect fun getSongDatabase(): SongDatabase
 
+/*///////////////////////////////////////////////////////////
+ * Mapper class to map data objects back to respective platform
+ *///////////////////////////////////////////////////////////
 open class Mapper {
     open fun map(type:String, data:Map<String, Any>): Any {
         //Child class should implement mapping
@@ -10,8 +13,14 @@ open class Mapper {
     }
 }
 
+/*///////////////////////////////////////////////////////////
+ * COMMON SONG DATABASE MODULE
+ *///////////////////////////////////////////////////////////
 class SongDatabase(private val database: SongDb) {
 
+    /*///////////////////////////////////////////////////////////
+     * EXPOSED METHODS
+     *///////////////////////////////////////////////////////////
     fun getAllSongs(mapper: Mapper): List<Any> {
         return database.schemaQueries.getAllSongs { id, name ->
             val map = mutableMapOf<String, Any>()
@@ -22,13 +31,12 @@ class SongDatabase(private val database: SongDb) {
     }
 
     fun getAllPlayLists(mapper: Mapper): List<Any> {
-        return database.schemaQueries.getAllPlayLists { id, name, tint, playListId, songId ->
+        return database.schemaQueries.getAllPlayLists { id, name, tint, songs ->
             val map = mutableMapOf<String, Any>()
             map["id"] = id
             map["name"] = name
             map["tint"] = tint
-            map["playListId"] = playListId
-            map["songId"] = songId
+            map["songs"] = songs
             mapper.map("PlayList", map)
         }.executeAsList()
     }
@@ -56,7 +64,7 @@ class SongDatabase(private val database: SongDb) {
         }).executeAsList()
     }
 
-    fun syncPlayList(playListId: Int, songs:List<Int>) {
+    fun syncPlayList(playListId: Int, songs:List<Int>): Boolean {
         val songIds = database.schemaQueries.getAllSongsForPlayList(playListId.toLong()).executeAsList().map { it.id.toInt() }
 
         val unlinkSongIds = songIds.filter { !songs.contains(it) }
@@ -77,5 +85,7 @@ class SongDatabase(private val database: SongDb) {
                 }
             }
         }
+
+        return unlinkSongIds.isNotEmpty() || linkSongIds.isNotEmpty()
     }
 }
