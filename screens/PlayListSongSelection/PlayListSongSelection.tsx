@@ -106,7 +106,7 @@ function PlayListSongSelection({ route, navigation }) {
                         onSelect={onSelect}
                     />
                 )}
-                keyExtractor={item => item.id}
+                keyExtractor={item => `S${item.id}`}
                 extraData={selected}
             />
         </SafeAreaView>

@@ -5,11 +5,7 @@ import android.content.Context
 import com.facebook.react.*
 import com.facebook.soloader.SoLoader
 import com.simpleplaylist.database.Db
-import com.simpleplaylist.database.Mapper
-import com.simpleplaylist.database.SongDatabase
-import com.simpleplaylist.database.SongDb
 import com.simpleplaylist.modules.SongPackage
-import com.squareup.sqldelight.android.AndroidSqliteDriver
 import java.lang.reflect.InvocationTargetException
 
 public class MainApplication: Application(), ReactApplication {

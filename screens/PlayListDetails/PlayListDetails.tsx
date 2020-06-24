@@ -67,7 +67,7 @@ function PlayListDetails({ route, navigation }) {
                         item={item}
                     />
                 )}
-                keyExtractor={item => item.id}
+                keyExtractor={item => `PLS${item.id}`}
             />
         </SafeAreaView>
     );

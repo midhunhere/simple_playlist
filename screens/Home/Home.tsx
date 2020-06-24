@@ -70,7 +70,7 @@ function Home({ navigation }) {
                         onSelect={onSelect}
                     />
                 )}
-                keyExtractor={item => item.id}
+                keyExtractor={item => `PL${item.id}`}
             />
         </SafeAreaView>
     );
