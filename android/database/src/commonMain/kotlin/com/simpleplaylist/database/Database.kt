@@ -52,18 +52,6 @@ class SongDatabase(private val database: SongDb) {
             }).executeAsList()
     }
 
-    fun getPlayList(playListId: Int, mapper:Mapper): List<Any> {
-        return database.schemaQueries.getPlayList(
-            id = playListId.toLong(),
-            mapper = { id, name, tint ->
-            val map = mutableMapOf<String, Any>()
-            map["id"] = id
-            map["name"] = name
-            map["tint"] = tint
-            mapper.map("PlayList", map)
-        }).executeAsList()
-    }
-
     fun syncPlayList(playListId: Int, songs:List<Int>): Boolean {
         val songIds = database.schemaQueries.getAllSongsForPlayList(playListId.toLong()).executeAsList().map { it.id.toInt() }
 

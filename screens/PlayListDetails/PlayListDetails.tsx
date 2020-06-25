@@ -1,13 +1,15 @@
 import styles from './styles';
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, SafeAreaView, FlatList, NativeModules, NativeEventEmitter } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { Icon } from 'react-native-elements'
+import { Icon } from 'react-native-elements';
+import ColorView from '../../components';
 
 function SongItem({ item }) {
     return (
         <View style={styles.item}>
+            <View style={styles.iconContainer}>
+                <Icon name="music-note" type="material" color="#437414" />
+            </View>
             <Text style={styles.title}>{item.name}</Text>
         </View>
     );
@@ -15,13 +17,22 @@ function SongItem({ item }) {
 
 function PlayListDetails({ route, navigation }) {
 
-    const { playListId } = route.params;
+    const { playListId, name, tint } = route.params;
     const [songs, setSongs] = useState(new Array());
     const [isUpdateNeeded, setUpdateNeeded] = useState(true);
 
-    const onDataUpdate = (event) => {
+    const onDataUpdate = () => {
         setUpdateNeeded(true);
     };
+
+    navigation.setOptions({
+        title: name,
+        headerRight: () => (
+            <View style={styles.iconContainer}>
+                <Icon name="library-add" type="material" onPress={() => onChoose()} />
+            </View>
+        )
+    });
 
     useEffect(
         () => {
@@ -39,36 +50,48 @@ function PlayListDetails({ route, navigation }) {
 
     const onChoose = () => {
         navigation.navigate('PlayListSongSelection', {
-            playListId: playListId
+            playListId: playListId,
+            songIds: songs.map(song => song.id)
         });
     };
 
     if (isUpdateNeeded) {
         NativeModules.SongManager.getAllSongsForPlayList(playListId)
-            .then(res => {
+            .then((res: any) => {
                 setUpdateNeeded(false);
                 setSongs(res["songs"]);
-                navigation.setOptions({
-                    title: res["name"],
-                    headerRight: () => (
-                        <Icon name="library-add" type="material" onPress={() => onChoose()} />
-                    )
-                });
             })
-            .catch(e => console.log(e.message, e.code));
+            .catch((e: any) => console.log(e.message, e.code));
+    }
+
+    const itemLoaded = songs.length > 0
+
+    let content;
+    if (itemLoaded) {
+        content = <FlatList
+            contentContainerStyle={styles.listRounded}
+            data={songs}
+            renderItem={({ item }) => (
+                <SongItem
+                    item={item}
+                />
+            )}
+            keyExtractor={item => `PLS${item.id}`}
+            ItemSeparatorComponent={() => {
+                return (
+                    <View style={styles.itemSeperator} />
+                );
+            }}
+        />;
+    } else {
+        content = <View style={styles.loading}><Text style={styles.loadingText}>{"Loading ..."}</Text></View>;
     }
 
     return (
         <SafeAreaView style={styles.container}>
-            <FlatList
-                data={songs}
-                renderItem={({ item }) => (
-                    <SongItem
-                        item={item}
-                    />
-                )}
-                keyExtractor={item => `PLS${item.id}`}
-            />
+            <ColorView style={styles.color} color={tint}>
+                {content}
+            </ColorView>
         </SafeAreaView>
     );
 }

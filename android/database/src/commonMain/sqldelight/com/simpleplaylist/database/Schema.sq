@@ -41,10 +41,6 @@ JOIN PlayListSongs ON Song.id = PlayListSongs.songId
 WHERE playListId = ?
 ORDER BY (name);
 
-getPlayList:
-SELECT * FROM PlayList
-WHERE id = ? ;
-
 linkSongWithPlayList:
 INSERT INTO PlayListSongs (playListId, songId)
 VALUES (?, ?);

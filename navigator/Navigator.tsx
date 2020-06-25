@@ -8,8 +8,8 @@ import PlayListSongSelection from '../screens/PlayListSongSelection';
 
 type NavigationParamList = {
     Home: undefined;
-    PlayListDetails: { playListId: string };
-    PlayListSongSelection: { playListId: string };
+    PlayListDetails: { playListId: string, name: string, tint: string };
+    PlayListSongSelection: { playListId: string, songIds: Array<number> };
 };
 
 const HomeStack = createStackNavigator<NavigationParamList>();
@@ -17,7 +17,7 @@ const HomeStack = createStackNavigator<NavigationParamList>();
 function Navigator() {
     return (
         <HomeStack.Navigator initialRouteName="Home">
-            <HomeStack.Screen name="Home" component={Home} options={{ title: 'PlayLists' }} />
+            <HomeStack.Screen name="Home" component={Home} options={{ title: 'Playlists' }} />
             <HomeStack.Screen name="PlayListDetails" component={PlayListDetails} options={{ title: 'Songs' }} />
             <HomeStack.Screen name="PlayListSongSelection" component={PlayListSongSelection} options={{ title: 'Select Songs' }} />
         </HomeStack.Navigator>

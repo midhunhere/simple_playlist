@@ -1,8 +1,7 @@
 import styles from './styles';
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import { Text, View, NativeModules, TouchableOpacity, SafeAreaView, FlatList } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { AllSongs } from 'data/Data';
 
 function SongItem({ id, title, selected, onSelect }) {
 
@@ -17,6 +16,9 @@ function SongItem({ id, title, selected, onSelect }) {
         <TouchableOpacity
             onPress={() => onSelect(id)}
             style={styles.item}>
+            <View style={styles.iconContainer}>
+                <Icon name="music-note" type="material" color={selected ? '#437414' : '#F4F4F4'} />
+            </View>
             <Text style={styles.title}>{title}</Text>
             {icon}
         </TouchableOpacity>
@@ -26,7 +28,7 @@ function SongItem({ id, title, selected, onSelect }) {
 
 function PlayListSongSelection({ route, navigation }) {
 
-    const { playListId } = route.params;
+    const { playListId, songIds } = route.params;
     const [allSongs, setAllSongs] = useState(new Array());
     const [selected, setSelected] = useState(new Map());
 
@@ -54,18 +56,20 @@ function PlayListSongSelection({ route, navigation }) {
         });
 
         NativeModules.SongManager.syncPlayList(playListId, songIds)
-            .then(res => {
+            .then((res: boolean) => {
                 if (res) {
                     navigation.goBack();
                 }
             })
-            .catch(e => console.log(e.message, e.code));
+            .catch((e: any) => console.log(e.message, e.code));
     };
 
     if (selected.size > 0) {
         navigation.setOptions({
             headerRight: () => (
-                <Icon name="done-all" type="material" onPress={() => onDone()} />
+                <View style={styles.iconContainer}>
+                    <Icon name="done-all" type="material" onPress={() => onDone()} />
+                </View>
             )
         });
     } else {
@@ -76,39 +80,53 @@ function PlayListSongSelection({ route, navigation }) {
         });
     }
 
+    const itemLoaded = allSongs.length > 0
 
-    if (allSongs.length == 0) {
+    if (!itemLoaded) {
         NativeModules.SongManager.getAllSongs()
-            .then(res => {
+            .then((res: any) => {
                 setAllSongs(res["songs"]);
-                return NativeModules.SongManager.getAllSongsForPlayList(playListId)
-            })
-            .then(res => {
-                const selectedMap = new Map(selected);
-                res["songs"].forEach(song => {
-                    selectedMap.set(song.id, true);
-                });
 
-                setSelected(selectedMap);
+                const defaultSelected = new Map();
+                songIds.forEach((songId: number) => {
+                    defaultSelected.set(songId, true);
+                });
+                setSelected(defaultSelected);
             })
-            .catch(e => console.log(e.message, e.code));
+            .catch((e: any) => console.log(e.message, e.code));
+    }
+
+
+
+    let content;
+    if (itemLoaded) {
+        content = <FlatList
+            style={styles.list}
+            contentContainerStyle={styles.listRounded}
+            data={allSongs}
+            renderItem={({ item }) => (
+                <SongItem
+                    id={item.id}
+                    title={item.name}
+                    selected={!!selected.get(item.id)}
+                    onSelect={onSelect}
+                />
+            )}
+            keyExtractor={item => `S${item.id}`}
+            extraData={selected}
+            ItemSeparatorComponent={() => {
+                return (
+                    <View style={styles.itemSeperator} />
+                );
+            }}
+        />;
+    } else {
+        content = <View style={styles.loading}><Text style={styles.loadingText}>{"Loading ..."}</Text></View>;
     }
 
     return (
         <SafeAreaView style={styles.container}>
-            <FlatList
-                data={allSongs}
-                renderItem={({ item }) => (
-                    <SongItem
-                        id={item.id}
-                        title={item.name}
-                        selected={!!selected.get(item.id)}
-                        onSelect={onSelect}
-                    />
-                )}
-                keyExtractor={item => `S${item.id}`}
-                extraData={selected}
-            />
+            {content}
         </SafeAreaView>
     );
 }

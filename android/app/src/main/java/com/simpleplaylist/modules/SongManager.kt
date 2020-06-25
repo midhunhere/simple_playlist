@@ -81,16 +81,6 @@ public class SongManager(private val reactContext: ReactApplicationContext): Rea
 
             map.putArray("songs", songs)
 
-            database.getPlayList(playlistId, object : Mapper(){
-                override fun map(type: String, data: Map<String, Any>): Any {
-                    return Arguments.createMap().also {
-                        map.putInt("id", (data["id"] as Long).toInt())
-                        map.putString("name", data["name"] as String)
-                        map.putString("tint", data["tint"] as String)
-                    }
-                }
-            })
-
             promise.resolve(map)
         }
     }

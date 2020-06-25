@@ -77,21 +77,7 @@ class SongManager: RCTEventEmitter {
     
       // Get songs for given playlistID
       let allSongs = self.database.getAllSongs(playListId: Int32(playlistId), mapper: SwiftMapper())
-      var map: [String: Any] = [ "songs" : allSongs ]
-
-      // Get playlist details
-      let mapper = SwiftMapper()
-      mapper.mapperFunc = { (type, data) in
-        
-        map["name"] = data["name"]
-        map["id"] = data["id"]
-        map["tint"] = data["tint"]
-        
-        return data
-      }
-      _ = self.database.getPlayList(playListId: Int32(playlistId), mapper: mapper)
-      
-      mapper.mapperFunc = nil
+      let map: [String: Any] = [ "songs" : allSongs ]
       resolve(map)
     }
   }
