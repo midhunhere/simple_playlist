@@ -6,6 +6,7 @@ import ColorView from '../../components';
 import { NavigationParamList } from 'navigator/Navigator'
 import { StackScreenProps } from '@react-navigation/stack';
 
+// Type definitions
 type Song = {
     id: number
     name: string
@@ -15,6 +16,9 @@ type SongItemProps = {
     item: Song
 }
 
+type Props = StackScreenProps<NavigationParamList, 'PlayListDetails'>;
+
+// Song item cell
 const SongItem = React.memo(({ item }: SongItemProps) =>
     <View style={styles.item}>
         <View style={styles.iconContainer}>
@@ -24,17 +28,13 @@ const SongItem = React.memo(({ item }: SongItemProps) =>
     </View>
 );
 
-type Props = StackScreenProps<NavigationParamList, 'PlayListDetails'>;
-
+// Play List Details Screen
 function PlayListDetails({ route, navigation }: Props) {
     const { playListId, name, tint } = route.params;
     const [songs, setSongs] = useState(new Array());
     const [isUpdateNeeded, setUpdateNeeded] = useState(true);
 
-    const onDataUpdate = () => {
-        setUpdateNeeded(true);
-    };
-
+    // Update navigation bar
     navigation.setOptions({
         title: name,
         headerRight: () => (
@@ -43,6 +43,12 @@ function PlayListDetails({ route, navigation }: Props) {
             </View>
         )
     });
+
+
+    // Data refresh handling
+    const onDataUpdate = () => {
+        setUpdateNeeded(true);
+    };
 
     useEffect(
         () => {
@@ -58,13 +64,17 @@ function PlayListDetails({ route, navigation }: Props) {
         []
     );
 
+    // Navigate to song selection
     const onChoose = () => {
+        const songIds = songs.map(song => song.id)
         navigation.navigate('PlayListSongSelection', {
             playListId: playListId,
-            songIds: songs.map(song => song.id)
+            songIds: songIds
         });
     };
 
+
+    // Fetch whenever update required
     if (isUpdateNeeded) {
         NativeModules.SongManager.getAllSongsForPlayList(playListId)
             .then((res: any) => {

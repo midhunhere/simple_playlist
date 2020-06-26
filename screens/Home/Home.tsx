@@ -6,6 +6,7 @@ import { Icon } from 'react-native-elements';
 import ColorView from '../../components'
 import { useNavigation } from '@react-navigation/native';
 
+// Type definitions
 type PlayList = {
     id: number
     name: string

@@ -7,13 +7,13 @@ import PlayListDetails from '../screens/PlayListDetails';
 import PlayListSongSelection from '../screens/PlayListSongSelection';
 
 export type PlayListDetailsParams = {
-    playListId: string
+    playListId: number
     name: string
     tint: string
 }
 
 export type PlayListSongSelectionParams = {
-    playListId: string
+    playListId: number
     songIds: Array<number>
 }
 

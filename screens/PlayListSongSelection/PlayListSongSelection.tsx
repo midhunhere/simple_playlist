@@ -5,6 +5,7 @@ import { Icon } from 'react-native-elements';
 import { StackScreenProps } from '@react-navigation/stack';
 import { NavigationParamList } from 'navigator/Navigator';
 
+// Type definitions
 type SongItemProps = {
     id: number
     name: string
@@ -12,6 +13,10 @@ type SongItemProps = {
     select(id: number): void
 }
 
+type Props = StackScreenProps<NavigationParamList, 'PlayListSongSelection'>;
+
+
+// Song item cell
 const SongItem = React.memo(({ id, name, selected, select }: SongItemProps) => {
     let icon;
     if (selected) {
@@ -33,14 +38,16 @@ const SongItem = React.memo(({ id, name, selected, select }: SongItemProps) => {
     );
 });
 
-type Props = StackScreenProps<NavigationParamList, 'PlayListSongSelection'>;
-
+// Song Selection screen component
 function PlayListSongSelection({ route, navigation }: Props) {
 
+    // State data
     const { playListId, songIds } = route.params;
     const [allSongs, setAllSongs] = useState(new Array());
     const [selected, setSelected] = useState(new Map());
 
+
+    // song selection/deselection
     const onSelect = React.useCallback(
         id => {
             const newSelected = new Map(selected);
@@ -56,6 +63,7 @@ function PlayListSongSelection({ route, navigation }: Props) {
         [selected],
     );
 
+    // On done selection
     const onDone = () => {
 
         var songIds = Array();
@@ -67,6 +75,7 @@ function PlayListSongSelection({ route, navigation }: Props) {
         NativeModules.SongManager.syncPlayList(playListId, songIds)
             .then((res: boolean) => {
                 if (res) {
+                    // Upon success go back
                     navigation.goBack();
                 }
             })
@@ -89,6 +98,7 @@ function PlayListSongSelection({ route, navigation }: Props) {
         });
     }
 
+    // Load songs
     const itemLoaded = allSongs.length > 0
 
     if (!itemLoaded) {
