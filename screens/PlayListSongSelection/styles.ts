@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#EDF2F2'
     },
     list: {
-        padding: 12
+        margin: 12
     },
     listRounded: {
         borderRadius: 10,

@@ -3,20 +3,30 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, SafeAreaView, FlatList, NativeModules, NativeEventEmitter } from 'react-native';
 import { Icon } from 'react-native-elements';
 import ColorView from '../../components';
+import { NavigationParamList } from 'navigator/Navigator'
+import { StackScreenProps } from '@react-navigation/stack';
 
-function SongItem({ item }) {
-    return (
-        <View style={styles.item}>
-            <View style={styles.iconContainer}>
-                <Icon name="music-note" type="material" color="#437414" />
-            </View>
-            <Text style={styles.title}>{item.name}</Text>
-        </View>
-    );
+type Song = {
+    id: number
+    name: string
 }
 
-function PlayListDetails({ route, navigation }) {
+type SongItemProps = {
+    item: Song
+}
 
+const SongItem = React.memo(({ item }: SongItemProps) =>
+    <View style={styles.item}>
+        <View style={styles.iconContainer}>
+            <Icon name="music-note" type="material" color="#437414" />
+        </View>
+        <Text style={styles.title}>{item.name}</Text>
+    </View>
+);
+
+type Props = StackScreenProps<NavigationParamList, 'PlayListDetails'>;
+
+function PlayListDetails({ route, navigation }: Props) {
     const { playListId, name, tint } = route.params;
     const [songs, setSongs] = useState(new Array());
     const [isUpdateNeeded, setUpdateNeeded] = useState(true);
@@ -76,6 +86,10 @@ function PlayListDetails({ route, navigation }) {
                     item={item}
                 />
             )}
+            maxToRenderPerBatch={5}
+            updateCellsBatchingPeriod={100}
+            initialNumToRender={20}
+            removeClippedSubviews={true}
             keyExtractor={item => `PLS${item.id}`}
             ItemSeparatorComponent={() => {
                 return (

@@ -4,10 +4,24 @@ import { SafeAreaView, FlatList, Text, View, NativeModules, NativeEventEmitter }
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-elements';
 import ColorView from '../../components'
+import { useNavigation } from '@react-navigation/native';
 
-function PlayListItem({ item, onSelect }) {
+type PlayList = {
+    id: number
+    name: string
+    tint: string
+    songs: number
+}
+
+type PlayListItemProps = {
+    item: PlayList
+    select(item: PlayList): void
+}
+
+// Play List Item Cell
+const PlayListItem = React.memo(({ item, select }: PlayListItemProps) => {
     return (
-        <TouchableOpacity style={styles.item} onPress={() => onSelect(item)}>
+        <TouchableOpacity style={styles.item} onPress={() => select(item)}>
             <ColorView style={styles.color} color={item.tint} />
             <View style={styles.iconContainer}>
                 <Icon name="library-music" type="material" color={item.tint} />
@@ -16,10 +30,13 @@ function PlayListItem({ item, onSelect }) {
             <Text style={styles.subTitle}>{item.songs}</Text>
         </TouchableOpacity>
     );
-}
+});
 
-function Home({ navigation }) {
+// Home Screen
+function Home() {
 
+    // State hooks
+    const navigation = useNavigation();
     const [playLists, setPlayLists] = useState(new Array());
     const [isUpdateNeeded, setUpdateNeeded] = useState(true);
 
@@ -27,6 +44,7 @@ function Home({ navigation }) {
         setUpdateNeeded(true);
     };
 
+    // Refresh on data update
     useEffect(
         () => {
             const DataUpdateEvents = new NativeEventEmitter(NativeModules.SongManager)
@@ -41,8 +59,8 @@ function Home({ navigation }) {
         []
     );
 
-    const onSelect = (item: any) => {
-        console.log("Selected " + item.id);
+    // Navigation to details
+    const onSelect = (item: PlayList) => {
         navigation.navigate('PlayListDetails', {
             playListId: item.id,
             name: item.name,
@@ -70,9 +88,13 @@ function Home({ navigation }) {
             renderItem={({ item }) => (
                 <PlayListItem
                     item={item}
-                    onSelect={onSelect}
+                    select={onSelect}
                 />
             )}
+            maxToRenderPerBatch={5}
+            updateCellsBatchingPeriod={100}
+            initialNumToRender={20}
+            removeClippedSubviews={true}
             keyExtractor={item => `PL${item.id}`}
             ItemSeparatorComponent={() => {
                 return (

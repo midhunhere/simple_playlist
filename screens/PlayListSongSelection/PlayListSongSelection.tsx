@@ -2,9 +2,17 @@ import styles from './styles';
 import React, { useState } from 'react';
 import { Text, View, NativeModules, TouchableOpacity, SafeAreaView, FlatList } from 'react-native';
 import { Icon } from 'react-native-elements';
+import { StackScreenProps } from '@react-navigation/stack';
+import { NavigationParamList } from 'navigator/Navigator';
 
-function SongItem({ id, title, selected, onSelect }) {
+type SongItemProps = {
+    id: number
+    name: string
+    selected: boolean
+    select(id: number): void
+}
 
+const SongItem = React.memo(({ id, name, selected, select }: SongItemProps) => {
     let icon;
     if (selected) {
         icon = <Icon type="material" name="done" containerStyle={styles.icon} />;
@@ -14,19 +22,20 @@ function SongItem({ id, title, selected, onSelect }) {
 
     return (
         <TouchableOpacity
-            onPress={() => onSelect(id)}
+            onPress={() => select(id)}
             style={styles.item}>
             <View style={styles.iconContainer}>
                 <Icon name="music-note" type="material" color={selected ? '#437414' : '#F4F4F4'} />
             </View>
-            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.title}>{name}</Text>
             {icon}
         </TouchableOpacity>
     );
-}
+});
 
+type Props = StackScreenProps<NavigationParamList, 'PlayListSongSelection'>;
 
-function PlayListSongSelection({ route, navigation }) {
+function PlayListSongSelection({ route, navigation }: Props) {
 
     const { playListId, songIds } = route.params;
     const [allSongs, setAllSongs] = useState(new Array());
@@ -97,7 +106,6 @@ function PlayListSongSelection({ route, navigation }) {
     }
 
 
-
     let content;
     if (itemLoaded) {
         content = <FlatList
@@ -107,11 +115,15 @@ function PlayListSongSelection({ route, navigation }) {
             renderItem={({ item }) => (
                 <SongItem
                     id={item.id}
-                    title={item.name}
+                    name={item.name}
                     selected={!!selected.get(item.id)}
-                    onSelect={onSelect}
+                    select={onSelect}
                 />
             )}
+            maxToRenderPerBatch={5}
+            updateCellsBatchingPeriod={100}
+            initialNumToRender={20}
+            removeClippedSubviews={true}
             keyExtractor={item => `S${item.id}`}
             extraData={selected}
             ItemSeparatorComponent={() => {

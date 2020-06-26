@@ -6,10 +6,21 @@ import Home from '../screens/Home';
 import PlayListDetails from '../screens/PlayListDetails';
 import PlayListSongSelection from '../screens/PlayListSongSelection';
 
-type NavigationParamList = {
+export type PlayListDetailsParams = {
+    playListId: string
+    name: string
+    tint: string
+}
+
+export type PlayListSongSelectionParams = {
+    playListId: string
+    songIds: Array<number>
+}
+
+export type NavigationParamList = {
     Home: undefined;
-    PlayListDetails: { playListId: string, name: string, tint: string };
-    PlayListSongSelection: { playListId: string, songIds: Array<number> };
+    PlayListDetails: PlayListDetailsParams;
+    PlayListSongSelection: PlayListSongSelectionParams;
 };
 
 const HomeStack = createStackNavigator<NavigationParamList>();
