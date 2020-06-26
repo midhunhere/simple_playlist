@@ -1,10 +1,15 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { FunctionComponent, Props } from 'react';
+import { View } from 'react-native';
 
-function ColorView(props) {
+type ColorViewProps = {
+    color: string
+    style: object
+}
+
+const ColorView: FunctionComponent<ColorViewProps> = ({ color, style, children }) => {
     return (
-        <View style={{ ...{ backgroundColor: props.color }, ...props.style }}>
-            {props.children}
+        <View style={{ ...{ backgroundColor: color }, ...style }}>
+            {children}
         </View>
     );
 };
