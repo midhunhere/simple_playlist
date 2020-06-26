@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Props } from 'react';
+import React, { FunctionComponent } from 'react';
 import { View } from 'react-native';
 
 type ColorViewProps = {
